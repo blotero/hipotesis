@@ -99,14 +99,16 @@ export function PopulationChart({ result, onYearHover }: PopulationChartProps): 
             }}
             labelFormatter={(label) => String(label)}
           />
-          <Legend verticalAlign="top" height={36} />
+          <Legend verticalAlign="top" />
           <ReferenceLine
             y={MILESTONE_POPULATION}
             stroke="var(--color-capacity)"
             strokeDasharray="4 4"
             label={{
               value: t('chart.annotation.carryingCapacity'),
-              position: 'right',
+              // Inside the plot: `right` overflows the 32px right margin and the
+              // label gets clipped at every column width.
+              position: 'insideTopRight',
               fontSize: 10,
               fill: 'var(--color-capacity)',
             }}
@@ -117,7 +119,9 @@ export function PopulationChart({ result, onYearHover }: PopulationChartProps): 
             strokeDasharray="4 4"
             label={{
               value: t('chart.annotation.currentYear'),
-              position: 'top',
+              // `top` draws above the plot area, where it runs into the legend
+              // once the legend wraps to two lines at narrow widths.
+              position: 'insideTop',
               fontSize: 10,
               fill: 'var(--color-today)',
             }}

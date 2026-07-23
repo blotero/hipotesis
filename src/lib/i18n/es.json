@@ -5,6 +5,7 @@
   "app.nav.about": "Acerca de",
   "controls.title": "Estrategias de Control",
   "controls.description": "Habilita y configura las medidas de control poblacional para ver su efecto proyectado.",
+  "controls.sheet.toggle": "Mostrar u ocultar las estrategias de control",
   "controls.lethal.label": "Control Letal",
   "controls.lethal.description": "Eutanasia humanitaria aplicada por especialistas en fauna silvestre. El único método modelado capaz de lograr una reducción poblacional a escala.",
   "controls.lethal.param.individualsPerYear.label": "Individuos por año",

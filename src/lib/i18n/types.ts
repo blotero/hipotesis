@@ -7,6 +7,7 @@ export type TranslationKey =
   // Controls section
   | 'controls.title'
   | 'controls.description'
+  | 'controls.sheet.toggle'
   // Lethal control
   | 'controls.lethal.label'
   | 'controls.lethal.description'

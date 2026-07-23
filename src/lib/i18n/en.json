@@ -5,6 +5,7 @@
   "app.nav.about": "About",
   "controls.title": "Control Strategies",
   "controls.description": "Enable and configure population control measures to see their projected effect.",
+  "controls.sheet.toggle": "Show or hide control strategies",
   "controls.lethal.label": "Lethal Control",
   "controls.lethal.description": "Humane euthanasia applied by wildlife specialists. The only method modeled to achieve population reduction at scale.",
   "controls.lethal.param.individualsPerYear.label": "Individuals per year",

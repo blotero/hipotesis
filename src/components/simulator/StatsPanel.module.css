@@ -1,13 +1,25 @@
+/*
+ * Sized off the containing visualization column, not the viewport — the column
+ * width varies independently of viewport width across the layout breakpoints.
+ * Only 4 / 2 / 1 columns: auto-fit would happily produce a row of 3 and leave
+ * a single orphan card on the second row.
+ */
 .panel {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr;
   gap: var(--spacing-md);
   margin-top: var(--spacing-md);
 }
 
-@media (max-width: 480px) {
+@container (min-width: 320px) {
   .panel {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@container (min-width: 700px) {
+  .panel {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

@@ -1,6 +1,12 @@
+/*
+ * Three-column layout at desktop widths: controls | charts | map.
+ * The map is a portrait SVG, so it gets its own fixed-width column instead of
+ * stretching across the full content width (which made it ~1100px tall and
+ * forced a scroll after every parameter change).
+ */
 .layout {
   display: grid;
-  grid-template-columns: 340px 1fr;
+  grid-template-columns: 320px minmax(0, 1fr) var(--map-column-width);
   gap: var(--spacing-lg);
   max-width: var(--content-max-width);
   margin: 0 auto;
@@ -8,9 +14,33 @@
   align-items: start;
 }
 
-@media (max-width: 800px) {
+/* Two columns: controls + stacked visualizations. */
+@media (max-width: 1279px) {
+  .layout {
+    grid-template-columns: 320px minmax(0, 1fr);
+  }
+
+  .mapColumn {
+    grid-column: 2;
+  }
+
+  /* Span both rows so the sticky sidebar tracks the full scroll height
+     rather than only the first row's grid area. */
+  .controls {
+    grid-row: 1 / -1;
+  }
+}
+
+/* Single column; controls become a bottom sheet. */
+@media (max-width: 860px) {
   .layout {
     grid-template-columns: 1fr;
+    /* Room for the collapsed sheet pinned to the bottom of the viewport. */
+    padding-bottom: calc(var(--sheet-handle-height) + var(--spacing-lg));
+  }
+
+  .mapColumn {
+    grid-column: auto;
   }
 }
 
@@ -20,6 +50,17 @@
   gap: var(--spacing-md);
   position: sticky;
   top: calc(var(--nav-height) + var(--spacing-md));
+}
+
+.controlsBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* The sheet handle only exists below the sidebar breakpoint. */
+.sheetHandle {
+  display: none;
 }
 
 .controlsHeader {
@@ -59,4 +100,117 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-lg);
+  min-width: 0;
+  /* Lets children size themselves off this column's width rather than the
+     viewport's — the column width differs a lot per breakpoint. */
+  container-type: inline-size;
+}
+
+.mapColumn {
+  position: sticky;
+  top: calc(var(--nav-height) + var(--spacing-md));
+  width: 100%;
+  max-width: var(--map-column-width);
+  margin-inline: auto;
+}
+
+@media (max-width: 1279px) {
+  .mapColumn {
+    position: static;
+  }
+}
+
+/* ---------------------------------------------------------------- */
+/* Mobile: controls as a bottom sheet                                */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 860px) {
+  .controls {
+    position: fixed;
+    /* Must clear the sidebar rule's `top`, or the sheet stretches between
+       top and bottom instead of anchoring to the bottom edge. */
+    top: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 150;
+    gap: 0;
+    background: var(--background);
+    border-top: 1px solid var(--card-border);
+    border-radius: var(--card-radius) var(--card-radius) 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.14);
+    max-height: 55vh;
+  }
+
+  .sheetHandle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    height: var(--sheet-handle-height);
+    padding: 8px var(--spacing-md);
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .grabber {
+    width: 34px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--card-border);
+    flex-shrink: 0;
+  }
+
+  .chips {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  .chip {
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    padding: 5px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    color: var(--foreground);
+    opacity: 0.5;
+    white-space: nowrap;
+    transition:
+      opacity 0.15s,
+      border-color 0.15s;
+  }
+
+  .chipActive {
+    border-color: var(--color-projection);
+    color: var(--color-projection);
+    opacity: 1;
+  }
+
+  .controlsBody {
+    display: none;
+    padding: 0 var(--spacing-md) var(--spacing-lg);
+    overflow-y: auto;
+    /* Leave the handle visible while the body scrolls. */
+    max-height: calc(55vh - var(--sheet-handle-height));
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .controlsOpen .controlsBody {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip {
+    transition: none;
+  }
 }

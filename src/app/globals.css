@@ -11,9 +11,17 @@
 
   /* Layout */
   --nav-height: 56px;
-  --content-max-width: 1200px;
+  --content-max-width: 1600px;
   --spacing-md: 16px;
   --spacing-lg: 24px;
+
+  /* Width of the map column at the widest breakpoint; also the cap the map
+     wrapper never exceeds once it flows inline at narrower widths. The map SVG
+     is portrait (420x560), so an uncapped width makes it taller than a viewport. */
+  --map-column-width: 400px;
+
+  /* Height of the collapsed mobile controls sheet handle */
+  --sheet-handle-height: 56px;
 
   /* Cards */
   --card-bg: #f5f5f5;
