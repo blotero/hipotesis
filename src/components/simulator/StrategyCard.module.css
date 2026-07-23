@@ -1,0 +1,90 @@
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s;
+}
+
+.card.active {
+  border-color: var(--color-projection);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.description {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--foreground);
+  opacity: 0.65;
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleTrack {
+  display: block;
+  width: 36px;
+  height: 20px;
+  background: var(--card-border);
+  border-radius: 10px;
+  transition: background 0.2s;
+  position: relative;
+}
+
+.toggleTrack::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.toggle input:checked + .toggleTrack {
+  background: var(--color-projection);
+}
+
+.toggle input:checked + .toggleTrack::after {
+  transform: translateX(16px);
+}
+
+.sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slidersDisabled {
+  opacity: var(--disabled-opacity);
+  pointer-events: none;
+}

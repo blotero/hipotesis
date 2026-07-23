@@ -1,0 +1,186 @@
+.panel {
+  margin-top: var(--spacing-md);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--spacing-md);
+}
+
+.title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.subtitle {
+  margin: 4px 0 var(--spacing-md);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--foreground);
+  opacity: 0.6;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+@media (max-width: 560px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.sizeRef {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0.45;
+}
+
+.svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  overflow: visible;
+}
+
+.silhouette {
+  fill: var(--card-border);
+  fill-opacity: 0.25;
+  stroke: var(--foreground);
+  stroke-opacity: 0.35;
+  stroke-width: 0.6;
+}
+
+.poop {
+  /* Fade/scale in as new cells fill. */
+  animation: pop 0.25s ease-out;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.coverage {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.metrics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.groupTitle {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  opacity: 0.45;
+}
+
+.metricSub {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--foreground);
+  opacity: 0.75;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+}
+
+.metricValue {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.metricLabel {
+  font-size: 0.74rem;
+  color: var(--foreground);
+  opacity: 0.6;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tooltipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 8px;
+  font-style: italic;
+  font-family: serif;
+  cursor: help;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 8px 10px;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  width: 240px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  text-align: left;
+  color: var(--foreground);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.metric:hover .tooltip {
+  opacity: 1;
+}

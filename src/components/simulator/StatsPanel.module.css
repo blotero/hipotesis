@@ -1,0 +1,85 @@
+.panel {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+@media (max-width: 480px) {
+  .panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  position: relative;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.label {
+  font-size: 0.78rem;
+  color: var(--foreground);
+  opacity: 0.6;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.tooltipIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 8px;
+  font-style: italic;
+  font-family: serif;
+  cursor: help;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: 8px 10px;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  width: 260px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  text-align: left;
+  color: var(--foreground);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.card:hover .tooltip {
+  opacity: 1;
+}

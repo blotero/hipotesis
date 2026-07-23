@@ -1,13 +1,59 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Chart colors */
+  --color-historical: #4a7c9e;
+  --color-projection: #c07a2f;
+  --color-capacity: #c0392b;
+  --color-today: #888;
+  --color-grid: #e0e0e0;
+
+  /* Layout */
+  --nav-height: 56px;
+  --content-max-width: 1200px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+
+  /* Cards */
+  --card-bg: #f5f5f5;
+  --card-border: #e0e0e0;
+  --card-radius: 8px;
+
+  /* Disabled state */
+  --disabled-opacity: 0.4;
+
+  /* Map */
+  --map-ocean: #c2dff0;
+  --map-land: #e4dfd5;
+  --map-neighbor: #d4cfc6;
+  --map-border: #a8a39b;
+  --map-river: #6baed6;
+  --map-affected: #ecd9c2;
+  --map-dept-border: #b7a98f;
+  --map-dept-label: #8a7f6c;
+  --map-place-label: #3a3226;
+  --map-place-dot: #4a4032;
+  --map-river-label: #3a6a8c;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --color-grid: #2a2a2a;
+  --card-bg: #1a1a1a;
+  --card-border: #333;
+  --map-ocean: #1a2d3a;
+  --map-land: #302d28;
+  --map-neighbor: #2a2826;
+  --map-border: #555;
+  --map-river: #4a7a9e;
+  --map-affected: #3a3226;
+  --map-dept-border: #4a463f;
+  --map-dept-label: #7d7568;
+  --map-place-label: #d8d2c6;
+  --map-place-dot: #cfc7b6;
+  --map-river-label: #6fa3c4;
 }
 
 html {
@@ -42,8 +88,6 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+html.dark {
+  color-scheme: dark;
 }

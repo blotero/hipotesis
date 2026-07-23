@@ -1,0 +1,23 @@
+.footer {
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--card-border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.disclaimer {
+  font-size: 0.78rem;
+  color: var(--foreground);
+  opacity: 0.5;
+  max-width: 680px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.openSource {
+  font-size: 0.75rem;
+  color: var(--foreground);
+  opacity: 0.35;
+}
