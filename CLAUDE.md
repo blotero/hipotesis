@@ -26,6 +26,8 @@ bun run build      # production build + type-check
 
 **Styling:** No Tailwind, no UI component library. CSS Modules (`*.module.css`) co-located with components. Build components from scratch.
 
+**Math on /about:** the model equations are written as native MathML JSX (`src/components/about/formulas.tsx`), rendered by `Formula` / `InlineMath`. No KaTeX or MathJax — react-dom handles the MathML namespace, and `src/types/mathml.d.ts` supplies the JSX typings @types/react omits (add elements there as needed). Keep words out of the math so both locales share one formula; only the caption is translated. The formulas mirror `engine.ts` and `history.ts` — change them together. The numeric claims made in the /about prose are pinned by the `analytical properties documented on /about` tests in `engine.test.ts`.
+
 **Tests:** co-located with source (`engine.test.ts` next to `engine.ts`). Bun's built-in runner; import from `bun:test`.
 
 ## Code conventions

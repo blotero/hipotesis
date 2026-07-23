@@ -2,9 +2,11 @@ import { describe, expect, it } from 'bun:test'
 import { computeWasteImpact, getNoControlStrategy, runSimulation } from './engine'
 import {
   CURRENT_YEAR,
+  GROSS_BIRTH_RATE,
   INITIAL_POPULATION,
   INITIAL_YEAR,
   MILESTONE_POPULATION,
+  NATURAL_DEATH_RATE,
   PROJECTION_END_YEAR,
   PROJECTION_NET_GROWTH_RATE,
 } from './constants'
@@ -263,6 +265,119 @@ describe('structural invariants', () => {
 
   it('does not throw with no controls', () => {
     expect(() => runSimulation(getNoControlStrategy())).not.toThrow()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Analytical properties documented on /about
+//
+// The About page states these as consequences of the model's equations. They are
+// pinned here so the page cannot silently drift from the engine: if a constant or
+// the recurrence changes, these fail and the copy has to be revised with them.
+// ---------------------------------------------------------------------------
+
+describe('analytical properties documented on /about', () => {
+  const sterilizeFemales = (femalesPerYear: number): ControlStrategy => ({
+    lethalControl: { enabled: false, individualsPerYear: 0 },
+    sterilization: { enabled: true, malesPerYear: 0, femalesPerYear },
+    displacement: { enabled: false, individualsPerYear: 0 },
+  })
+
+  const remove = (individualsPerYear: number): ControlStrategy => ({
+    lethalControl: { enabled: true, individualsPerYear },
+    sterilization: { enabled: false, malesPerYear: 0, femalesPerYear: 0 },
+    displacement: { enabled: false, individualsPerYear: 0 },
+  })
+
+  // "the population doubles every ~7.6 years"
+  it('doubles in ~7.6 years without controls', () => {
+    const analytic = Math.log(2) / Math.log(1 + PROJECTION_NET_GROWTH_RATE)
+    expect(analytic).toBeGreaterThan(7.5)
+    expect(analytic).toBeLessThan(7.7)
+
+    const { projection } = runSimulation(getNoControlStrategy())
+    const start = projection[0]
+    expect(start).toBeDefined()
+    const doubled = projection.find((p) => p.population >= 2 * (start?.population ?? 0))
+    // Whole-year grid, so the first year at or past 2x is ceil(7.56) = 8 steps.
+    expect(doubled?.year).toBe(CURRENT_YEAR + Math.ceil(analytic))
+  })
+
+  // "200 hippos in 2026 become roughly 4,500 by 2060"
+  it('reaches ~4,500 by 2060 without controls', () => {
+    const { projection } = runSimulation(getNoControlStrategy())
+    const final = findYear(projection, PROJECTION_END_YEAR)
+    expect(final.population).toBeGreaterThan(4400)
+    expect(final.population).toBeLessThan(4600)
+  })
+
+  // "break-even sits near 19 animals a year": N* = R / (b - d) = 19.2 at N = 200.
+  it('places the removal fixed point just above 19 per year at the 2026 population', () => {
+    const { historical } = runSimulation(getNoControlStrategy())
+    const start = historical[historical.length - 1]
+    expect(start).toBeDefined()
+    const breakEven = (start?.population ?? 0) * PROJECTION_NET_GROWTH_RATE
+    expect(breakEven).toBeGreaterThan(19)
+    expect(breakEven).toBeLessThan(20)
+  })
+
+  // "19 leaves the population still creeping upward, to about 245 by 2060"
+  it('still grows at 19 removals per year', () => {
+    const final = findYear(runSimulation(remove(19)).projection, PROJECTION_END_YEAR)
+    expect(final.population).toBeGreaterThan(200)
+    expect(final.population).toBeGreaterThan(235)
+    expect(final.population).toBeLessThan(255)
+  })
+
+  // "20 turns it over and drives it down to about 20 by 2060"
+  it('collapses at 20 removals per year', () => {
+    const final = findYear(runSimulation(remove(20)).projection, PROJECTION_END_YEAR)
+    expect(final.population).toBeLessThan(30)
+    expect(final.population).toBeGreaterThan(0)
+  })
+
+  // "21 eradicates it by 2053"
+  it('eradicates by 2053 at 21 removals per year', () => {
+    const { projection } = runSimulation(remove(21))
+    const extinct = projection.find((p) => p.population <= 0)
+    expect(extinct?.year).toBe(2053)
+  })
+
+  // "the fertile fraction [must] drop under d / b ≈ 0.172 — more than 82.8% of females"
+  it('needs 82.8% of females sterilized before births fall below natural deaths', () => {
+    const threshold = NATURAL_DEATH_RATE / GROSS_BIRTH_RATE
+    expect(threshold).toBeCloseTo(0.1724, 4)
+    expect(1 - threshold).toBeCloseTo(0.8276, 4)
+  })
+
+  // "at 4 females a year the threshold is never reached by 2060 and the curve
+  //  merely flattens; at 8 a year it is crossed in 2044 and the population turns over"
+  it('crosses the sterilization threshold at 8 females/yr but never at 4', () => {
+    const sterilizedShare = (p: SimulationPoint): number => p.sterilizedFemales / (p.population / 2)
+    const threshold = 1 - NATURAL_DEATH_RATE / GROSS_BIRTH_RATE
+
+    const low = runSimulation(sterilizeFemales(4)).projection
+    expect(low.some((p) => sterilizedShare(p) > threshold)).toBe(false)
+    expect(findYear(low, PROJECTION_END_YEAR).population).toBeGreaterThan(200)
+
+    const high = runSimulation(sterilizeFemales(8)).projection
+    expect(high.find((p) => sterilizedShare(p) > threshold)?.year).toBe(2044)
+    // Peaks at the crossing year, then declines.
+    const peak = high.reduce((best, p) => (p.population > best.population ? p : best), high[0]!)
+    expect(peak.year).toBe(2044)
+    expect(findYear(high, PROJECTION_END_YEAR).population).toBeLessThan(peak.population)
+  })
+
+  // "male sterilization does not move this number at all"
+  it('is unaffected by male sterilization', () => {
+    const malesOnly: ControlStrategy = {
+      lethalControl: { enabled: false, individualsPerYear: 0 },
+      sterilization: { enabled: true, malesPerYear: 12, femalesPerYear: 0 },
+      displacement: { enabled: false, individualsPerYear: 0 },
+    }
+    const withMales = findYear(runSimulation(malesOnly).projection, PROJECTION_END_YEAR)
+    const baseline = findYear(runSimulation(getNoControlStrategy()).projection, PROJECTION_END_YEAR)
+    expect(withMales.population).toBeCloseTo(baseline.population, 6)
   })
 })
 
