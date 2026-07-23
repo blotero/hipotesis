@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactElement } from 'react'
-import { useEffect, useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { useTheme } from 'next-themes'
 import styles from './Nav.module.css'
 
@@ -49,11 +49,18 @@ function MoonIcon(): ReactElement {
   )
 }
 
+// The resolved theme is only known on the client, so the button stays hidden
+// until after hydration. useSyncExternalStore reports server/client directly via
+// its snapshot pair — no setState-in-effect, and no cascading render.
+// Nothing to subscribe to — the snapshot never changes after hydration.
+const noop = (): void => undefined
+const subscribe = (): (() => void) => noop
+const getSnapshot = (): boolean => true
+const getServerSnapshot = (): boolean => false
+
 export function ThemeToggle(): ReactElement {
   const { theme, setTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => setMounted(true), [])
+  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
   const isDark = theme === 'dark'
   const toggle = (): void => setTheme(isDark ? 'light' : 'dark')

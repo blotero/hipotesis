@@ -12,6 +12,11 @@ import styles from './MapPanel.module.css'
 
 interface GeoFeature {
   rsmKey: string
+  // The only GeoJSON property this map reads; declared explicitly so it does not
+  // fall through to the `any` index signature below.
+  properties?: { name?: string }
+  // react-simple-maps hands back raw features whose remaining shape varies per
+  // topology and is passed straight back to <Geography>.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any
 }
@@ -123,7 +128,7 @@ export function MapPanel({ result, selectedYear, onYearChange }: MapPanelProps):
         <Geographies geography="/departments.json">
           {({ geographies }) =>
             (geographies as GeoFeature[]).map((geo) => {
-              const fill = AFFECTED_DEPTS.has(geo.properties?.name)
+              const fill = AFFECTED_DEPTS.has(geo.properties?.name ?? '')
                 ? 'var(--map-affected)'
                 : 'var(--map-land)'
               return (
